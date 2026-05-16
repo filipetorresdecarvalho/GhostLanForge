@@ -1,0 +1,38 @@
+# Build
+build/
+bin/
+out/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go
+src/core/vendor/
+
+# .NET
+src/ui/**/obj/
+src/ui/**/bin/
+*.user
+*.suo
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Secrets
+.env
+*.key
+*.pem
+credentials.json
+
+# Logs
+*.log
