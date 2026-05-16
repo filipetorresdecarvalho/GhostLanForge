@@ -1,8 +1,8 @@
-﻿# 🔨 GhostLanForge
+﻿# GhostLanForge
 
 **Forge your Windows PC and Linux VPS into one invisible supercomputer.**
 
-GhostLanForge creates a private, bidirectional network between your local machine and cloud VPS using Cloudflare Zero Trust — making them behave as if they're on the same home router, while your server remains completely invisible to the internet. No open ports. No ping responses. No traces. Just pure, silent power.
+GhostLanForge is a suite of micro applications that run on top of [NetBird](https://github.com/netbirdio/netbird), turning a simple WireGuard VPN overlay into a powerful private computing platform. Your machines share GPU, vector databases, AI tools, files, and more — all through an encrypted tunnel with zero open ports.
 
 Your VPS gets your GPU. Your PC gets the cloud's vector databases, Docker containers, and MCP services. Both machines forge each other into something neither could be alone.
 
@@ -21,105 +21,97 @@ Your VPS gets your GPU. Your PC gets the cloud's vector databases, Docker contai
 │                      │         │  • Processing Power   │
 └──────────────────────┘         └──────────────────────┘
               ▲                           ▲
-              │     Cloudflare Zero Trust  │
-              │     (Invisible Tunnel)     │
+              │      NetBird (WireGuard)  │
+              │      Private Network      │
               │                           │
               └───────────┬───────────────┘
                           │
-              🌐 The Internet sees NOTHING
-              ❌ No ping
-              ❌ No HTTP
-              ❌ No open ports
-              ❌ No scan responses
+              The Internet sees NOTHING
+              No open ports on VPS
+              Encrypted P2P tunnel
+              Zero Trust access control
 ```
 
 ---
 
-## Key Features
+## Foundation: NetBird
 
-### 🔮 Invisible Server
-- VPS has **ZERO** open ports
-- Doesn't respond to `ping`, `nmap`, `curl`, or anything
-- Completely invisible to port scanners and attackers
-- No one even knows your server exists
+GhostLanForge builds on [NetBird](https://github.com/netbirdio/netbird) (25.3k stars, Go, WireGuard-based, fully self-hostable). NetBird handles the hard networking so GhostLanForge can focus on the experience:
 
-### 🔁 Bidirectional Power
-- **Windows → VPS**: Access Docker, vector DB, MCP, databases as if local
-- **VPS → Windows**: Use your GPU, access files, run commands remotely
-- Both machines amplify each other's capabilities
-
-### 🏠 Same Network Feel
-- Windows sees VPS at `vps.local`
-- VPS sees Windows at `windows.local`
-- Works from home, coffee shop, office — anywhere
-- Low latency (20-50ms), Very High throughput
-
-### 🛡️ Zero Trust Security
-- Only **YOU** can connect (Bitwarden authentication)
-- Cloudflare Zero Trust verification
-- TLS 1.3 encryption
-- Device-based access control
+| NetBird Handles (free) | GhostLanForge Adds |
+|------------------------|-------------------|
+| WireGuard VPN tunnels | Beautiful WPF dashboard |
+| P2P encrypted connections | Bitwarden integration |
+| NAT traversal (STUN/TURN) | GPU sharing server |
+| Access control + policies | MCP protocol bridge |
+| Private DNS | Service discovery |
+| SSO/MFA | Bidirectional file sharing |
+| REST API + gRPC | Diagnostics + auto-fix |
+| Admin dashboard | Vector DB client |
+| Device posture checks | Interactive setup wizard |
 
 ---
 
-## Usage Examples
+## Micro Apps
 
-### Windows Uses VPS Vector Database
+Each GhostForge app is independent — install only what you need.
 
-```python
-import requests
+| App | Purpose | Platform |
+|-----|---------|----------|
+| **GhostForge.Setup** | Interactive setup wizard with system checks and auto-fix | Windows (WPF), Linux (CLI) |
+| **GhostForge.Monitor** | Real-time dashboard — peers, latency, throughput, alerts | Windows (WPF) |
+| **GhostForge.Vault** | Bitwarden CLI integration — secrets management for all apps | Windows, Linux |
+| **GhostForge.MCP** | MCP protocol bridge — AI tools across machines | Windows (client), Linux (server) |
+| **GhostForge.GPU** | Share Windows GPU with VPS for inference/training | Windows (server), Linux (client) |
+| **GhostForge.Files** | Bidirectional file sharing — mounts, sync, drag-and-drop | Windows (drive), Linux (FUSE) |
+| **GhostForge.Scan** | Auto-discover services running on NetBird peers | Windows, Linux |
+| **GhostForge.Agent** | VPS server agent — stats, Docker management, health reports | Linux (systemd/Docker) |
+| **GhostForge.Vector** | Vector DB client — query ChromaDB/Qdrant through the tunnel | Windows (WPF) |
+| **GhostForge.Tunnel** | One-click tunnel management — expose services, configure routes | Windows (WPF) |
+| **GhostForge.Diag** | Network diagnostics — health checks, MD reports, auto-fix | Windows, Linux |
+| **GhostForge.WebAI** | Secure web AI proxy — prompt sanitizer, threat detection (future) | Windows, Linux |
 
-# Access VPS vector DB as if it's local
-response = requests.get('http://vector-db.local/api/query',
-    json={'query': 'machine learning', 'top_k': 10})
-
-results = response.json()
-# Works like VPS is on your local network!
-```
-
-### VPS Uses Windows GPU
-
-```python
-import requests
-
-# VPS accesses your Windows GPU as if it's local
-response = requests.post('http://windows-gpu.local/api/generate',
-    json={'prompt': 'A sunset over mountains', 'steps': 50})
-
-image = response.json()['image']
-# VPS just used YOUR GPU to generate an AI image!
-```
-
-### Bidirectional File Sharing
-
-```python
-# Windows: Get files from VPS
-files = requests.get('http://vps.local/api/files').json()
-
-# VPS: Get files from Windows
-files = requests.get('http://windows-files.local/api/list').json()
-
-# Both see each other's resources as local!
-```
+See [ghostlanforge-ecosystem.md](ghostlanforge-ecosystem.md) for full details on each app.
 
 ---
 
 ## Architecture
 
-GhostLanForge uses **Cloudflare Tunnels + Zero Trust** to create outbound-only connections from both machines. No inbound ports. No exposed services. Just encrypted tunnels through Cloudflare's global network.
-
 ```
-Windows (outbound only)  ──►  Cloudflare  ◄──  VPS (outbound only)
-         No open ports         Zero Trust         No open ports
+┌─────────────────────────────────────────────────────────────────┐
+│                        Windows PC                                │
+│                                                                  │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │              GhostForge.Monitor (WPF Dashboard)            │  │
+│  └──────────┬──────────┬──────────┬──────────┬───────────────┘  │
+│  ┌──────────▼──┐ ┌─────▼────┐ ┌──▼────────┐ ┌▼──────────────┐  │
+│  │ Forge.Scan  │ │Forge.Diag│ │Forge.Tunnel│ │Forge.Vector   │  │
+│  └──────┬──────┘ └────┬─────┘ └─────┬─────┘ └──────┬────────┘  │
+│  ┌──────▼──────┐ ┌────▼─────┐ ┌────▼──────┐ ┌─────▼───────┐   │
+│  │ Forge.Vault │ │Forge.GPU │ │Forge.Files│ │ Forge.MCP    │   │
+│  └─────────────┘ └──────────┘ └───────────┘ └─────────────┘   │
+│                          │                                      │
+│              ┌───────────▼───────────┐                          │
+│              │   NetBird Agent       │                          │
+│              │   (WireGuard VPN)     │                          │
+│              └───────────┬───────────┘                          │
+└──────────────────────────┼──────────────────────────────────────┘
+                           │              WireGuard P2P
+                           │              (encrypted)
+┌──────────────────────────┼──────────────────────────────────────┐
+│                    Linux VPS │                                   │
+│              ┌───────────▼───────────┐                          │
+│              │   NetBird Agent       │                          │
+│              └───────────┬───────────┘                          │
+│         ┌────────────────┼────────────────┐                    │
+│  ┌──────▼──────┐ ┌──────▼──────┐ ┌───────▼──────┐             │
+│  │Forge.Agent  │ │ Forge.MCP   │ │ Forge.Files  │             │
+│  └─────────────┘ └─────────────┘ └──────────────┘              │
+│  ┌─────────────┐ ┌─────────────┐ ┌──────────────┐             │
+│  │ ChromaDB    │ │ Docker      │ │ Grafana      │             │
+│  └─────────────┘ └─────────────┘ └──────────────┘             │
+└─────────────────────────────────────────────────────────────────┘
 ```
-
-### Security Layers
-
-1. **Layer 1**: Cloudflare Zero Trust Authentication (Bitwarden + 2FA)
-2. **Layer 2**: Private Network Isolation (virtual LAN)
-3. **Layer 3**: Outbound-Only Connections (no listening ports)
-4. **Layer 4**: TLS 1.3 End-to-End Encryption
-5. **Layer 5**: Application-Level Authentication (JWT tokens)
 
 ---
 
@@ -127,88 +119,61 @@ Windows (outbound only)  ──►  Cloudflare  ◄──  VPS (outbound only)
 
 | Component | Technology |
 |-----------|-----------|
-| Language | **Go** (Golang) |
-| Transport | Cloudflare Tunnels |
-| Auth | Cloudflare Zero Trust + Bitwarden |
-| Protocol | WebSocket + MCP |
-| Encryption | TLS 1.3 |
-| Database | Vector DB (VPS side) |
-| Container | Docker |
-| Monitoring | Prometheus + Grafana |
+| VPN / Network | **NetBird** (WireGuard, self-hosted) |
+| Windows UI | **WPF** (.NET 10, C#, MVVM) |
+| Core Services | **Go** (single binary) |
+| Secrets | **Bitwarden CLI** |
+| AI Protocol | **MCP** (Model Context Protocol) |
+| Vector DB | ChromaDB / Qdrant |
+| Containers | Docker |
+| VPS Agent | Go + systemd |
 
 ---
 
 ## Quick Start
 
-### Prerequisites
+### 1. Install NetBird
 
-- Go 1.21+
-- Bitwarden CLI (`npm install -g @bitwarden/cli`)
-- Cloudflare account with Zero Trust enabled
-- Linux VPS (Ubuntu 20.04+ recommended)
-- Windows 10/11
+```powershell
+# Windows
+winget install NetBird.NetBird
 
-### Install
-
-```bash
-# Clone the repo
-git clone https://github.com/filipetorresdecarvalho/GhostLanForge.git
-cd GhostLanForge
-
-# Build
-go build -o ghostlanforge ./cmd/client
-
-# Run the interactive setup
-./ghostlanforge setup
+# Linux VPS
+curl -fsSL https://pkgs.netbird.io/install.sh | sh
+netbird up --setup-key <YOUR_KEY>
 ```
 
-The setup wizard will:
-1. Check your system requirements
-2. Ask relevant configuration questions
-3. Test connectivity to your VPS
-4. Configure Cloudflare Zero Trust
-5. Set up Bitwarden authentication
-6. Start the forge link
+Self-host the management server: https://netbird.io/docs/getting-started/self-hosting
 
-### Deploy Server (VPS)
+### 2. Install GhostForge.Setup
+
+Download from [GitHub Releases](https://github.com/filipetorresdecarvalho/GhostLanForge/releases) and run the setup wizard. It will detect your NetBird network, check prerequisites, and help you install the micro apps you want.
+
+### 3. Install GhostForge.Agent on VPS
 
 ```bash
-# On your VPS
-curl -sSL https://raw.githubusercontent.com/filipetorresdecarvalho/GhostLanForge/main/scripts/install-server.sh | bash
+curl -sSL https://github.com/filipetorresdecarvalho/GhostForge.Agent/releases/latest/download/install.sh | bash
 ```
 
 ---
 
-## Project Structure
+## Repositories
 
-```
-GhostLanForge/
-├── cmd/
-│   ├── server/main.go          # VPS server daemon
-│   └── client/main.go          # Windows CLI client
-├── internal/
-│   ├── forge/                  # Core forge link engine
-│   ├── tunnel/                 # Cloudflare tunnel management
-│   ├── auth/                   # Bitwarden + Zero Trust auth
-│   ├── mcp/                    # MCP protocol client
-│   ├── setup/                  # Interactive setup wizard
-│   └── diag/                   # Diagnostics & auto-fix
-├── pkg/
-│   ├── ghostnet/               # Private network abstraction
-│   ├── bitwarden/              # Bitwarden CLI integration
-│   └── cloudflare/             # CF tunnel SDK
-├── configs/
-│   ├── server.yaml
-│   └── client.yaml
-├── scripts/
-│   ├── install-server.sh
-│   └── install-client.ps1
-├── docs/
-│   ├── architecture.md
-│   ├── setup-guide.md
-│   └── troubleshooting.md
-└── tests/
-```
+| Repo | Description |
+|------|-------------|
+| [GhostLanForge](https://github.com/filipetorresdecarvalho/GhostLanForge) | This repo — ecosystem documentation |
+| GhostForge.Setup | Interactive setup wizard |
+| GhostForge.Monitor | Dashboard + monitoring |
+| GhostForge.Vault | Bitwarden integration |
+| GhostForge.MCP | MCP protocol bridge |
+| GhostForge.GPU | GPU sharing |
+| GhostForge.Files | File sharing |
+| GhostForge.Scan | Service discovery |
+| GhostForge.Agent | VPS server agent |
+| GhostForge.Vector | Vector DB client |
+| GhostForge.Tunnel | Tunnel management |
+| GhostForge.Diag | Diagnostics + auto-fix |
+| GhostForge.WebAI | Web AI proxy (future) |
 
 ---
 
@@ -216,14 +181,12 @@ GhostLanForge/
 
 | File | Description |
 |------|-------------|
-| `docs/architecture.md` | Full architecture documentation |
-| `docs/setup-guide.md` | Step-by-step setup instructions |
-| `docs/troubleshooting.md` | Common issues and solutions |
-| `prompt.md` | AI development prompt |
-| `private-network-solution.md` | Private network technical details |
-| `private-network-complete.md` | Complete usage examples |
-| `vps-solutions.md` | Solution comparison matrix |
-| `websocket-proxy-plan.md` | Go implementation plan |
+| [ghostlanforge-ecosystem.md](ghostlanforge-ecosystem.md) | Full ecosystem documentation with all micro apps |
+| [prompt.md](prompt.md) | AI development prompt for background agents |
+| [private-network-solution.md](private-network-solution.md) | Original private network technical details |
+| [private-network-complete.md](private-network-complete.md) | Usage examples |
+| [vps-solutions.md](vps-solutions.md) | VPS solution comparison (10 solutions) |
+| [websocket-proxy-plan.md](websocket-proxy-plan.md) | Original Go implementation plan |
 
 ---
 
@@ -235,7 +198,7 @@ GhostLanForge/
 | Query Latency | 20-50ms |
 | Throughput | Very High |
 | Concurrent Connections | 500+ |
-| Security | Zero Trust |
+| Security | Zero Trust (NetBird + Bitwarden) |
 
 ---
 
@@ -247,4 +210,5 @@ MIT License
 
 **Created by**: Filipe Torres de Carvalho
 **Status**: Planning Phase
-**Language**: Go
+**Built on**: [NetBird](https://github.com/netbirdio/netbird) (BSD-3 / AGPL-3)
+**Languages**: Go + C# (.NET 10)
